@@ -25,6 +25,10 @@ void app_main(void) {
 
     gpio_config(&io_conf);
     gpio_install_isr_service(0); // installs gpio interrupt driver
+
+    printf("Wait 30s for sensor to not bug out \n");
+    vTaskDelay(pdMS_TO_TICKS(30000));
+
     gpio_isr_handler_add(MOTION_SENSOR_PIN, isr_handler, (void*) MOTION_SENSOR_PIN); // hooks pin to specific isr function
     gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
 
