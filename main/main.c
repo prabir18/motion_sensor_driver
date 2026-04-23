@@ -16,7 +16,7 @@ static void IRAM_ATTR isr_handler(void* arg) {
 void app_main(void) {
     // config
     gpio_config_t io_conf = {
-        .intr_type = GPIO_INTR_POSEDGE,
+        .intr_type = GPIO_INTR_ANYEDGE,
         .mode = GPIO_MODE_INPUT,
         .pin_bit_mask = (1ULL << MOTION_SENSOR_PIN),
         .pull_down_en = 1,
@@ -37,7 +37,11 @@ void app_main(void) {
     uint32_t received_pin;
     while(1) {
         if (xQueueReceive(gpio_evt_queue, &received_pin, portMAX_DELAY)) {
-            printf("Motion detected, interrupt on pin %lu \n", received_pin);
+            if (gpio_get_level(received_pin) == 1) {
+                printf("Motion detected, interrupt on pin %lu \n", received_pin);
+            } else {
+                printf("No motion \n");
+            }
         }
     }
 }
