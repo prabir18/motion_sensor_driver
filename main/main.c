@@ -29,8 +29,8 @@ void app_main(void) {
     printf("Wait 30s for sensor to not bug out \n");
     vTaskDelay(pdMS_TO_TICKS(30000));
 
-    gpio_isr_handler_add(MOTION_SENSOR_PIN, isr_handler, (void*) MOTION_SENSOR_PIN); // hooks pin to specific isr function
     gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
+    gpio_isr_handler_add(MOTION_SENSOR_PIN, isr_handler, (void*) MOTION_SENSOR_PIN); // hooks pin to specific isr function
 
     printf("Waiting for Motion \n");
 
@@ -38,7 +38,7 @@ void app_main(void) {
     while(1) {
         if (xQueueReceive(gpio_evt_queue, &received_pin, portMAX_DELAY)) {
             if (gpio_get_level(received_pin) == 1) {
-                printf("Motion detected, interrupt on pin %lu \n", received_pin);
+                printf("Motion detected \n");
             } else {
                 printf("No motion \n");
             }
